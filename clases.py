@@ -349,7 +349,7 @@ class Juego:
         pygame.display.flip()
     def esquinas_fantasmas(self):
         self.pantalla.fill((0,0,0))
-        fuente_texto = pygame.font.SysFont("Courier", 30)
+        fuente_texto = pygame.font.SysFont("Courier", 25)
         fuente_esquinas = pygame.font.SysFont("Courier", 25)
         fantasma_actual_inidce = self.fantasmas_seleccionados[self.posicion_fantasma_seleccionado]
         nombre_fantasma_actual = f"{self.fantasmas[fantasma_actual_inidce - 1]['nombre']}"
@@ -357,13 +357,23 @@ class Juego:
         esquinas = ["Arriba Izquierda", "Arriba Derecha", "Abajo Izquierda", "Abajo Derecha"]
         poscion_y = 200
         num = 1
+        texto_eleccion = fuente_texto.render(f"Asigná una esquina a {nombre_fantasma_actual} [{len(self.esquinas_fantasma)}/4]", True, color_fantasma_actual)
+        self.pantalla.blit(texto_eleccion, (35, 50))
+        esquinas_usadas = []
+        for i in self.esquinas_fantasma:
+            esquinas_usadas.append(i["esquina"])
         for esquina in esquinas:
-            self.pantalla.blit(fuente_esquinas.render(f"{num}.", True, (255, 255, 255)), (150, poscion_y))
-            self.pantalla.blit(fuente_esquinas.render(esquina, True, (255, 255, 255)), (180, poscion_y))
+            if esquina in esquinas_usadas:
+                color_esquina = (128, 128, 128)
+                self.pantalla.blit(fuente_esquinas.render(f"{num}.", True, color_esquina), (150, poscion_y))
+                self.pantalla.blit(fuente_esquinas.render(esquina, True, color_esquina), (180, poscion_y))
+            else:
+                self.pantalla.blit(fuente_esquinas.render(f"{num}.", True, (255, 255, 255)), (150, poscion_y))
+                self.pantalla.blit(fuente_esquinas.render(esquina, True, (255, 255, 255)), (180, poscion_y))
             poscion_y += 75
             num += 1
-        texto_eleccion = fuente_texto.render(f"Asigná una esquina a {nombre_fantasma_actual}", True, color_fantasma_actual)
-        self.pantalla.blit(texto_eleccion, (50, 50))
+        
+
         pygame.display.flip()
     def empezar_mapa(self):
         """
@@ -445,13 +455,18 @@ class Juego:
                     nombre_fantasma_seleccionado = self.fantasmas[fantasma_en_seleccionado_inidce - 1]["nombre"]
                     if event.key == pygame.K_1:
                         self.esquinas_fantasma.append({"nombre": nombre_fantasma_seleccionado, "esquina": "Arriba Izquierda"})
+                        self.posicion_fantasma_seleccionado += 1
                     elif event.key == pygame.K_2:
                         self.esquinas_fantasma.append({"nombre": nombre_fantasma_seleccionado, "esquina": "Arriba Derecha"})
+                        self.posicion_fantasma_seleccionado += 1
                     elif event.key == pygame.K_3:
                         self.esquinas_fantasma.append({"nombre": nombre_fantasma_seleccionado, "esquina": "Abajo Izquierda"})
+                        self.posicion_fantasma_seleccionado += 1
                     elif event.key == pygame.K_4:
                         self.esquinas_fantasma.append({"nombre": nombre_fantasma_seleccionado, "esquina": "Abajo Derecha"})
-
+                        self.posicion_fantasma_seleccionado += 1
+                    if self.posicion_fantasma_seleccionado == len(self.fantasmas_seleccionados):
+                        self.estado = "Juego"
 
             if self.estado == "Inicio": # si el estado es inicio
                 self.pantalla_inicio()
