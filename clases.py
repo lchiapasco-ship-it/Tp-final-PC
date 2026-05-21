@@ -180,6 +180,7 @@ class Puntaje:
         self.puntos = score #seteamos el puntaje
         self.high_score =  self.cargar_high_score() # cargamos el puntaje maximo
         self.vidas = 3 # seteamos las vidas
+        self.lvl = 1 # seteamos el nivel
     def cargar_high_score(self) -> int: 
         """
         Funcion para cargar el puntaje maximo
@@ -216,19 +217,30 @@ class Puntaje:
         if self.puntos > self.high_score: # si el puntaje actual es mayor al puntaje maximo
             self.high_score = self.puntos # seteamos el puntaje maximo al puntaje actual
         return self.puntos # devolvemos el puntaje actualizado
-
+    def actualizar_lvl(self, lvl: int):
+        """
+        Funcion para actualizar el nivel
+        
+        Args:
+            lvl (int): nivel del juego
+        """
+        self.lvl += lvl # seteamos el nivel
     def mostrar(self):
         """
         Funcion para mostrar el puntaje en la pantalla
         
         """
         fuente = pygame.font.SysFont("Courier", 40)  # seteamos la fuente para el txto
+        fuente_lvl = pygame.font.SysFont("Courier", 20)
         texto_score = fuente.render(f"{self.puntos}", True, (255, 255, 255)) # guardmaos los puntos
         texto_high_score_texto = fuente.render("HIGH SCORE", True, (255, 255, 255)) # guardamos el mensaje high score
         texto_high_score = fuente.render(f"{self.high_score}", True, (255, 255, 255)) # guradmaos el puntaje maximo
+        texto_lvl = fuente_lvl.render(f"LVL {self.lvl}", True, (255, 255, 255)) # guardamos el nivel
         self.pantalla.blit(texto_score, (30,30)) # mostramos los ountois en la pantalla
         self.pantalla.blit(texto_high_score_texto, (175,0)) # mostramos el mensaje highscore
         self.pantalla.blit(texto_high_score, (175,30)) # mostramos el puntaje maximo
+        self.pantalla.blit(texto_lvl, (450,40)) # mostramos el nivel
+
         if self.vidas == 0: # si no quedan vidas
             self.pantalla.fill((0,0,0))
             fuente = pygame.font.SysFont("Courier", 60)  # seteamos la fuente para el txto
@@ -279,7 +291,7 @@ class Juego:
         self.pantalla.fill((0,0,0))
         fuente_pacman = pygame.font.SysFont("Courier", 60)  # seteamos la fuente para el txto
         fuente_high_score = pygame.font.SysFont("Courier", 30)
-        texto_Pacman = fuente_pacman.render("PACMAN", True, (255, 255, 0))
+        texto_Pacman = fuente_pacman.render("PAC-MAN", True, (255, 255, 0))
         high_score = self.puntaje.cargar_high_score()
         texto_high_score = fuente_high_score.render(f"HIGH SCORE", True, (255, 255, 255))
         texto_high_score_numero = fuente_high_score.render(f"{high_score}", True, (255, 255, 0))
@@ -299,6 +311,9 @@ class Juego:
         pygame.display.flip()
 
     def elegir_fantasmas(self):  
+        """
+        Funcion para elegir los fantasmas
+        """
         self.pantalla.fill((0,0,0))
         fuente_texto_fantasma = pygame.font.SysFont("Courier", 30)
         fuente_fantasmas = pygame.font.SysFont("Courier", 25)
@@ -348,6 +363,9 @@ class Juego:
 
         pygame.display.flip()
     def esquinas_fantasmas(self):
+        """
+        Funcion para mostrar las esquinas de los fantasmas
+        """
         self.pantalla.fill((0,0,0))
         fuente_texto = pygame.font.SysFont("Courier", 25)
         fuente_esquinas = pygame.font.SysFont("Courier", 25)
@@ -506,6 +524,7 @@ class Juego:
                     self.puntaje.actualizar_puntaje(score) # actualizamos el puntaje
                     self.comida_faltante -= 1 # restamos 1 al contador de comida
                     if self.comida_faltante == 0: # si no quedan mas comida
+                        self.puntaje.actualizar_lvl(1) # aumentamos el nivel
                         self.empezar_mapa() # llamamos a la funcion para empezar denuevo
 
                 self.puntaje.mostrar() # mostramos el puntaje y el puntaje maximo
